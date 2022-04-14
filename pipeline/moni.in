@@ -85,6 +85,7 @@ shaped_slp              = os.path.join(shaped_slp_dirname, "SlpEncBuild")
 run_moni_exe            = os.path.join(compress_dirname, "extend_ksw2")
 run_moni_ms_exe         = os.path.join(compress_dirname, "ms")
 run_moni_mems_exe       = os.path.join(compress_dirname, "mems")
+run_sample_specific_exe = os.path.join(compress_dirname, "sample_specific")
 
 def get_max_memory():
   try:
@@ -593,6 +594,12 @@ def run(args):
       run_moni.start()
       run_moni.join()
 
+    if args.which == 'sample_specific':
+      run_sample_specific = run_helper(
+              name="SAMPLE_SPECIFIC", args=args, counter=2, exe=run_sample_specific_exe)
+      run_sample_specific.start()
+      run_sample_specific.join()
+
 def getGitDesc():
   branch = subprocess.check_output(
       'git rev-parse --abbrev-ref HEAD', shell=True, cwd=dirname).strip().decode("utf-8")
@@ -618,6 +625,7 @@ def main():
   ms_parser = subparsers.add_parser('ms', help='compute the matching statistics', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
   mems_parser = subparsers.add_parser('mems', help='compute the maximal exact matches', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
   extend_parser = subparsers.add_parser('extend', help='extend the MEMs ofthe reads in the reference genome', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+  sample_specific_parser = subparsers.add_parser('sample-specific', help='build help', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
   parser.add_argument('--version', help='print the version number', action='store_true')
   parser.set_defaults(which='base')
@@ -661,13 +669,20 @@ def main():
   extend_parser.add_argument('-O', '--gapo', help='coma separated gap open penalty values', type=str, default='4,13')
   extend_parser.add_argument('-E', '--gape', help='coma separated gap extension penalty values', type=str, default='2,1')
   extend_parser.set_defaults(which='extend')
+
+  sample_specific_parser.add_argument('-i', '--index', help='reference index folder', type=str, required=True)
+  sample_specific_parser.add_argument('-p', '--pattern', help='the input query', type=str, required=True)
+  sample_specific_parser.add_argument('-o', '--output', help='output directory path', type=str, default='.')
+  sample_specific_parser.add_argument('-t', '--threads', help='number of helper threads', default=1, type=int)
+  sample_specific_parser.add_argument('-g', '--grammar', help='select the grammar (only for moni and phoni) [plain, shaped]', type=str, default='plain')
+  sample_specific_parser.set_defaults(which='sample_specific')
   args = parser.parse_args()
 
   if args.which == 'base':
     base(args)
   elif args.which == 'build':
     build(args)
-  elif args.which == 'ms' or args.which == 'mems' or args.which == 'extend':
+  elif args.which == 'ms' or args.which == 'mems' or args.which == 'extend' or args.which == "sample_specific":
     run(args)
 
   return

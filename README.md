@@ -1,6 +1,3 @@
-[![Release](https://img.shields.io/github/release/maxrossi91/moni.svg)](https://github.com/maxrossi91/moni/releases)
-[![Downloads](https://img.shields.io/github/downloads/maxrossi91/moni/total?logo=github)](https://github.com/maxrossi91/moni/releases/download/v0.2.0/moni_0.2.0_amd64.deb)
-
 # MONI
 ```console
                            __  __  ____  _   _ _____

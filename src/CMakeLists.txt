@@ -84,3 +84,15 @@ target_include_directories(build_seqidx PUBLIC    "../include/ms"
                                         "../include/common" 
                                         )
 target_compile_options(build_seqidx PUBLIC "-std=c++17")
+
+add_executable(sample_specific sample_specific_strings.cpp ${bigbwt_SOURCE_DIR}/xerrors.c)
+target_link_libraries(sample_specific common sdsl divsufsort divsufsort64 malloc_count ri pthread)
+target_include_directories(sample_specific PUBLIC   "../include/ms"
+        "../include/common"
+        "${shaped_slp_SOURCE_DIR}"
+        "${FOLCA_SOURCE_DIR}"
+        "${SUX_SOURCE_DIR}/function"
+        "${SUX_SOURCE_DIR}/support"
+        "${ssw_SOURCE_DIR}/src"
+        "${bigbwt_SOURCE_DIR}")
+target_compile_options(sample_specific PUBLIC "-std=c++17")
