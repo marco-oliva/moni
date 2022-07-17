@@ -64,7 +64,7 @@ set(USE_INSTALL_PATH True)
 configure_file(${PROJECT_SOURCE_DIR}/pipeline/moni.in ${PROJECT_BINARY_DIR}/moni.install @ONLY)
 
 
-install(TARGETS ms mems rlebwt_ms_build extend_ksw2 compress_dictionary build_seqidx TYPE RUNTIME)
+install(TARGETS ms mems rlebwt_ms_build extend_ksw2 compress_dictionary build_seqidx sample_specific TYPE RUNTIME)
 install(TARGETS SlpEncBuild pfp_thresholds pfp_thresholds64 TYPE RUNTIME)
 install(PROGRAMS ${PROJECT_BINARY_DIR}/moni.install RENAME moni TYPE BIN)
 # install(TARGETS ms rlebwt_ms_build extend_ksw2 DESTINATION bin)
