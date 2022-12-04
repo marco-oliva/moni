@@ -18,7 +18,7 @@ Build the index for highly repetive files using the approach
 described in
 
    "MONI: A Pangenomics Index for Finding MEMs"
-   by Massimiliano Rossi, Marco Oliva, Ben Langmead, 
+   by Massimiliano Rossi, Marco Oliva, Ben Langmead,
       Travis Gagie, and Christina Boucher
 
 The input file cannot contain the characters 0, 1 or 2 which are
@@ -69,11 +69,11 @@ compress_exe            = os.path.join(compress_dirname, "compress_dictionary")
 
 repair_exe              = os.path.join(repair_dirname,"irepair")
 largerepair_exe         = os.path.join(largeb_repair_dirname,"largeb_irepair")
-# despair for byte symbols 
+# despair for byte symbols
 despair_exe             = os.path.join(repair_dirname,"despair")
-# despair for int32 symbols 
+# despair for int32 symbols
 integer_despair_exe     = os.path.join(repair_dirname,"idespair")
-# preprocess dict into a sequence of int32 representing both chars and distinct EOS 
+# preprocess dict into a sequence of int32 representing both chars and distinct EOS
 preprocess_exe          = os.path.join(bigrepair_dirname,"procdic")
 integer_preprocess_exe  = os.path.join(bigrepair_dirname,"iprocdic")
 # create final output file
@@ -154,7 +154,7 @@ class bigrepair(threading.Thread):
       print("RePair maximum memory: {}".format(repair_mem), flush=True)
 
       sstart = time.time()
-      # ---- compress the dictionary 
+      # ---- compress the dictionary
       start = time.time()
       exe = compress_exe
       command = "{exe} {file} -w {wsize} -p {modulus}".format(
@@ -165,7 +165,7 @@ class bigrepair(threading.Thread):
       preprocess_time = time.time()-start
       print("Compression time: {0:.4f}".format(preprocess_time), flush=True)
   
-      # ---- preprocess the dictionary 
+      # ---- preprocess the dictionary
       start = time.time()
       # exe = integer_preprocess_exe if args.i else preprocess_exe
       exe = preprocess_exe
@@ -179,7 +179,7 @@ class bigrepair(threading.Thread):
   
       # ---- apply repair to the modified dictionary
       start = time.time()
-      # if args.m==0:     
+      # if args.m==0:
         # command = "{exe} {file}.dicz.int".format(
         #         exe = os.path.join(bigrepair_dirname,repair_exe), file=args.reference)
       # else:
@@ -191,9 +191,9 @@ class bigrepair(threading.Thread):
       repair_time = time.time()-start
       print("repair(dict) time: {0:.4f}".format(repair_time), flush=True)
       
-      # ---- apply repair to the parse     
+      # ---- apply repair to the parse
       start = time.time()
-      # if args.m==0:     
+      # if args.m==0:
         # command = "{exe} {file}.parse".format(
         #         exe = os.path.join(bigrepair_dirname,repair_exe), file=args.reference)
       # else:
@@ -232,7 +232,7 @@ class bigrepair(threading.Thread):
       command = "rm -f {file}.parse.C {file}.parse.R {file}.dicz.int {file}.dicz.int.C {file}.dicz.int.R".format(file=args.reference)
       if(execute_command(command,logfile,logfile_name)!=True):
         return
-      # ---- repair done   
+      # ---- repair done
 
       print("==== Done", flush=True)
 
@@ -240,7 +240,7 @@ class bigrepair(threading.Thread):
       print("==== Computing final bigrepair. Command:", command, flush=True)
       if(execute_command(command,logfile,logfile_name)!=True):
         return
-      print("bigrepair Elapsed time: {0:.4f}".format(time.time()-sstart), flush=True)      
+      print("bigrepair Elapsed time: {0:.4f}".format(time.time()-sstart), flush=True)
 
 class SLP(threading.Thread):
   def __init__(self, name, counter, args):
@@ -273,7 +273,7 @@ class SLP(threading.Thread):
       
 
       sstart = time.time()
-      # ---- compress the dictionary 
+      # ---- compress the dictionary
       start = time.time()
       exe = shaped_slp
       command = "{exe} -i {file} -o {outfile}.{ext} -e {grammar} -f Bigrepair".format(
@@ -288,7 +288,7 @@ class SLP(threading.Thread):
   
       print("==== Done", flush=True)
 
-      print("ShapedSLP Elapsed time: {0:.4f}".format(time.time()-sstart), flush=True)      
+      print("ShapedSLP Elapsed time: {0:.4f}".format(time.time()-sstart), flush=True)
 
 
 class bigbwt(threading.Thread):
@@ -424,6 +424,10 @@ def build(args):
     logfile_name = args.output + ".moni.log"
   else:
     logfile_name = args.reference + ".moni.log"
+  
+  if args.noparsing:
+    print("==== Skipping the parsing phase as requested", flush=True)
+    return
 
   # get main bigbwt directory
   args.exe_dir = os.path.split(sys.argv[0])[0]
@@ -509,7 +513,7 @@ def build(args):
     build_moni_ms_thread.start()
     build_moni_ms_thread.join()
 
-      
+    
     print("Total construction time: {0:.4f}".format(
     time.time()-start0), flush=True)
     # ---- print elapsed time to file
@@ -640,6 +644,7 @@ def main():
   build_parser.add_argument('-f', help='read fasta',action='store_true')
   build_parser.add_argument('-g', '--grammar', help='select the grammar [plain, shaped]', type=str, default='plain')
   build_parser.add_argument('--parsing',  help='stop after the parsing phase (debug only)',action='store_true')
+  build_parser.add_argument('--noparsing',  help='Skip parsing, assume input already parsed.',action='store_true')
   build_parser.add_argument('--compress',  help='compress output of the parsing phase (debug only)',action='store_true')
   build_parser.set_defaults(which='build')
 
