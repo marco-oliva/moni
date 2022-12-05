@@ -523,7 +523,7 @@ def build(args):
             return
 
         # ---- delete intermediate files
-        delete_temp_files(args, logfile, logfile_name)
+        # delete_temp_files(args, logfile, logfile_name)
 
     print("==== Done", flush=True)
 
