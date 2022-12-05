@@ -496,34 +496,34 @@ def build(args):
             print("Elapsed time: {0:.4f}".format(time.time()-start), flush=True)
             # ----------- computation of the PFP data structures
 
-        pf_thresholds_thread = PFPthresholds(name="{}".format(args.reference), args=args, counter=1)
-        pf_thresholds_thread.start()
-        pf_thresholds_thread.join()
+    pf_thresholds_thread = PFPthresholds(name="{}".format(args.reference), args=args, counter=1)
+    pf_thresholds_thread.start()
+    pf_thresholds_thread.join()
 
-        bigrepair_thread = bigrepair(name="{}".format(args.reference), args=args, counter=2)
-        bigrepair_thread.start()
-        bigrepair_thread.join()
+    bigrepair_thread = bigrepair(name="{}".format(args.reference), args=args, counter=2)
+    bigrepair_thread.start()
+    bigrepair_thread.join()
 
-        SLP_thread = SLP(name="{}".format(args.reference), args=args, counter=3)
-        SLP_thread.start()
-        SLP_thread.join()
+    SLP_thread = SLP(name="{}".format(args.reference), args=args, counter=3)
+    SLP_thread.start()
+    SLP_thread.join()
 
-        # ---- Building final data structures
-        build_moni_ms_thread = build_moni_ms(name="{}".format(args.reference), args=args, counter=2)
-        build_moni_ms_thread.start()
-        build_moni_ms_thread.join()
+    # ---- Building final data structures
+    build_moni_ms_thread = build_moni_ms(name="{}".format(args.reference), args=args, counter=2)
+    build_moni_ms_thread.start()
+    build_moni_ms_thread.join()
 
 
-        print("Total construction time: {0:.4f}".format(
-            time.time()-start0), flush=True)
-        # ---- print elapsed time to file
-        command = "echo Total construction time: {0:.4f}".format(
-            time.time()-start0)
-        if(execute_command(command, logfile, logfile_name) != True):
-            return
+    print("Total construction time: {0:.4f}".format(
+        time.time()-start0), flush=True)
+    # ---- print elapsed time to file
+    command = "echo Total construction time: {0:.4f}".format(
+        time.time()-start0)
+    if(execute_command(command, logfile, logfile_name) != True):
+        return
 
-        # ---- delete intermediate files
-        delete_temp_files(args, logfile, logfile_name)
+    # ---- delete intermediate files
+    #delete_temp_files(args, logfile, logfile_name)
 
     print("==== Done", flush=True)
 
