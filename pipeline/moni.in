@@ -425,18 +425,18 @@ def build(args):
     else:
         logfile_name = args.reference + ".moni.log"
 
-    if args.noparsing:
-        print("==== Skipping the parsing phase as requested", flush=True)
-    else:
-        print("==== Parsing phase as requested", flush=True)
-        # get main bigbwt directory
-        args.exe_dir = os.path.split(sys.argv[0])[0]
-        print("Sending logging messages to file:", logfile_name, flush=True)
-        with open(logfile_name, "a") as logfile:
-            args.logfile = logfile
-            args.logfile_name = logfile_name
-            # ---------- parsing of the input file
-            start0 = start = time.time()
+    # get main bigbwt directory
+    args.exe_dir = os.path.split(sys.argv[0])[0]
+    print("Sending logging messages to file:", logfile_name, flush=True)
+    with open(logfile_name, "a") as logfile:
+        args.logfile = logfile
+        args.logfile_name = logfile_name
+        # ---------- parsing of the input file
+        start0 = start = time.time()
+
+        if args.noparsing:
+            print("==== Skipping the parsing phase as requested", flush=True)
+        else:
             if args.threads > 0:
                 if args.f:
                     # command = "{exe} {file} -w {wsize} -p {modulus} -t {th} -f".format(
@@ -486,44 +486,44 @@ def build(args):
                 return
 
 
-            start = time.time()
-            command = "{exe} {file}".format(
-                exe=os.path.join(args.exe_dir, seqidx_exe),
-                file=args.reference)
-            print("==== Build fasta index. Command:", command, flush=True)
-            if(execute_command(command, logfile, logfile_name) != True):
-                return
-            print("Elapsed time: {0:.4f}".format(time.time()-start), flush=True)
-            # ----------- computation of the PFP data structures
+        start = time.time()
+        command = "{exe} {file}".format(
+            exe=os.path.join(args.exe_dir, seqidx_exe),
+            file=args.reference)
+        print("==== Build fasta index. Command:", command, flush=True)
+        if(execute_command(command, logfile, logfile_name) != True):
+            return
+        print("Elapsed time: {0:.4f}".format(time.time()-start), flush=True)
+        # ----------- computation of the PFP data structures
 
-    pf_thresholds_thread = PFPthresholds(name="{}".format(args.reference), args=args, counter=1)
-    pf_thresholds_thread.start()
-    pf_thresholds_thread.join()
+        pf_thresholds_thread = PFPthresholds(name="{}".format(args.reference), args=args, counter=1)
+        pf_thresholds_thread.start()
+        pf_thresholds_thread.join()
 
-    bigrepair_thread = bigrepair(name="{}".format(args.reference), args=args, counter=2)
-    bigrepair_thread.start()
-    bigrepair_thread.join()
+        bigrepair_thread = bigrepair(name="{}".format(args.reference), args=args, counter=2)
+        bigrepair_thread.start()
+        bigrepair_thread.join()
 
-    SLP_thread = SLP(name="{}".format(args.reference), args=args, counter=3)
-    SLP_thread.start()
-    SLP_thread.join()
+        SLP_thread = SLP(name="{}".format(args.reference), args=args, counter=3)
+        SLP_thread.start()
+        SLP_thread.join()
 
-    # ---- Building final data structures
-    build_moni_ms_thread = build_moni_ms(name="{}".format(args.reference), args=args, counter=2)
-    build_moni_ms_thread.start()
-    build_moni_ms_thread.join()
+        # ---- Building final data structures
+        build_moni_ms_thread = build_moni_ms(name="{}".format(args.reference), args=args, counter=2)
+        build_moni_ms_thread.start()
+        build_moni_ms_thread.join()
 
 
-    print("Total construction time: {0:.4f}".format(
-        time.time()-start0), flush=True)
-    # ---- print elapsed time to file
-    command = "echo Total construction time: {0:.4f}".format(
-        time.time()-start0)
-    if(execute_command(command, logfile, logfile_name) != True):
-        return
+        print("Total construction time: {0:.4f}".format(
+            time.time()-start0), flush=True)
+        # ---- print elapsed time to file
+        command = "echo Total construction time: {0:.4f}".format(
+            time.time()-start0)
+        if(execute_command(command, logfile, logfile_name) != True):
+            return
 
-    # ---- delete intermediate files
-    #delete_temp_files(args, logfile, logfile_name)
+        # ---- delete intermediate files
+        delete_temp_files(args, logfile, logfile_name)
 
     print("==== Done", flush=True)
 
